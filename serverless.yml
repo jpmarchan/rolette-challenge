@@ -1,0 +1,83 @@
+service: masivian-challenge
+
+provider:
+  name: aws 
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  lambdaHashingVersion: 20201221
+  memorySize: 1024
+  timeout: 30 
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - S3:*
+            - 'lambda:*'
+            - dynamodb:*
+
+          Resource: '*'
+        - Effect: Allow
+          Action:
+            - "execute-api:ManageConnections"
+          Resource:
+            - "arn:aws:execute-api:*:*:**/@connections/*"
+            - "arn:aws:dynamodb:us-east-1:*:*"
+            
+  apiGateway:
+    minimumCompressionSize: 128
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+useDotenv: true
+
+custom:
+  serverless-offline:
+    httpPort: 5000
+    lambdaPort: 5001
+  apigwBinary:
+    types:
+      - 'multipart/form-data'
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-apigw-binary
+  - serverless-offline
+  - serverless-dotenv-plugin
+package:
+  patterns:
+    - '!lambdas/**'
+	
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+
+
+functions:
+  hello:
+    handler: src/handler.hello
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+          cors:
+            origin: '*'
+            headers:
+              - Access-Control-Allow-Headers
+              - Content-Type
+              - Access-Control-Allow-Origin
+              - client-hash
+              - client-id
+              - Auth
+            allowCredentials: false
+
