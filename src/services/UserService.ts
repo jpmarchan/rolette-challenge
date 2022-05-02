@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
 import { Request } from 'express';
-import dynamoose from 'dynamoose';
 import { decrypt, encrypt, getDay, hashMD5 } from '../helpers/helpers';
 import jwt from "jsonwebtoken"
 import { UserModel } from '../models/User';
@@ -53,7 +52,7 @@ class UserService {
         }
     }
 
-    public async validateUser(email: string) {
+    private async validateUser(email: string) {
         let dataUser = await UserModel.scan("email").eq(email).exec();
 
         return dataUser.length > 0 ? true : false;

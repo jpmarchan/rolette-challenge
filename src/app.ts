@@ -10,7 +10,7 @@ export class App {
     public app: Application
 
 
-    constructor(private port?: number | string) {//inicializamos todas las instancias en orden respectivo
+    constructor(private port?: number | string) {//we initialize all instances in respective order
         this.app = express()
         this.cors()
         this.setings()
@@ -20,19 +20,19 @@ export class App {
         this.body()
     }
 
-    setings(){ // identificar puerto por variable de entorno o local
+    setings(){ // identify port by local or environment variable
         this.app.set('port', this.port || process.env.PORT || 3000)
     }
 
-    middlewares(){ // onfiguracion de middlewares
+    middlewares(){ // middleware configuration
         this.app.use(morgan('dev'))
         
     }
-    routes(){ // configuracion de rutas
+    routes(){ // route configuration 
         this.app.use(indexRouter)
     }
     
-    cors(){// configuramos cors
+    cors(){// we configure cors
          const corsOptions = {
             origin: "*",
             credentials: false,
@@ -47,17 +47,16 @@ export class App {
     }
 
 
-    dynamose(){// utilizamos configuracion de dynamose
+    dynamose(){// we use dynamose configuration
         this.dynamo();
     }
     
 
-    async listent() {// escuchamos en el puerto configurado en el .env
+    async listent() {// we listen on the port configured in the .env
         this.app.listen(this.app.get('port'))
-        console.log('Server on port', this.app.get('port'))
     }
 
-    private dynamo() { // se crea la conexion con con la libreria dynamoose seteando las credenciales configuradas en el archivo /src/connection/DynamoDBClient
+    private dynamo() { // the connection is created with the dynamoose library by setting the credentials configured in the file /src/connection/DynamoDBClient
         const conn = new dynamoose.aws.sdk.DynamoDB(ddb_config);
         dynamoose.aws.ddb.set(conn);
 

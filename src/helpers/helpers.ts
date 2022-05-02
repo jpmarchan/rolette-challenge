@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 export const encrypt = (value: string): string => {
-    
+
     return CryptoJS.AES.encrypt(value, process.env.SECRETHASH ? process.env.SECRETHASH : "").toString();
 };
 

@@ -14,7 +14,7 @@ export default class BetsService {
         const decoded: any = jwt.verify(token ? token : "", process.env.SECRET ? process.env.SECRET : "");
         let roletteData = await RouletteModel.query("id").eq(idRolette).exec();
         let userData = await UserModel.query("id").eq(decoded.id).exec();
-        let validateBalances = this.validateBalances({balanceBets: roletteData[0].bets, idUser: decoded.id })
+        let validateBalances = this.validateBalances({ balanceBets: roletteData[0].bets, idUser: decoded.id })
         if (userData.count == 0) {
 
             return { status: false, message: "TOKEN_INVALID" }
@@ -27,7 +27,7 @@ export default class BetsService {
             roletteData[0].bets.push({
                 numbersOrColorsToBet: numbersOrColorsToBet,
                 moneyBet: moneyBet, idUser: decoded.id,
-                statusRolete:roletteData[0].status_roulette 
+                statusRolete: roletteData[0].status_roulette
             })
             await RouletteModel.update(
                 { id: idRolette },
@@ -38,7 +38,7 @@ export default class BetsService {
 
         return { status: roletteData.count != 0 ? true : false, message: roletteData.count != 0 ? "BETS_SUCCESS" : "BETS_FAILED" }
     }
-    
+
 
     private validateBalances(betsUser: any) {
         let sumBalancesByUser = 0

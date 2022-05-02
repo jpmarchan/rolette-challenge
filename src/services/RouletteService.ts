@@ -51,9 +51,9 @@ export default class RouletteService {
         let randomNumber = roletteData[0].numbers_to_bet[indexRandomNumber]
         let randomColor = roletteData[0].colors_to_bet[indexRandomColor]
         let arrayBetsUpdate = []
-        let count =0
+        let count = 0
         for (const bet of roletteData[0].bets) {
-            count = count +1
+            count = count + 1
             let userData = await UserModel.query("id").eq(bet.idUser).exec();
             if (bet.numbersOrColorsToBet === randomNumber && bet.statusRolete == "open") {
                 bet.moneyBetClose = (bet.moneyBet * 5)
@@ -67,15 +67,15 @@ export default class RouletteService {
                 arrayBetsUpdate.push(await bet)
                 await this.updateBalancesUser({ idUser: bet.idUser, newBalance: (bet.moneyBet * 1.8), balance: userData[0].balance, status: "winner" })
             }
-                bet.moneyBetClose = 0
-                bet.status = "loser"
-                arrayBetsUpdate.push(await bet)
-                await this.updateBalancesUser({ idUser: bet.idUser, newBalance: bet.moneyBet, balance: userData[0].balance, status: "loser" })
+            bet.moneyBetClose = 0
+            bet.status = "loser"
+            arrayBetsUpdate.push(await bet)
+            await this.updateBalancesUser({ idUser: bet.idUser, newBalance: bet.moneyBet, balance: userData[0].balance, status: "loser" })
         }
-        await this.updateStatusRolette({ id: id, randomNumber: randomNumber, randomColor: randomColor, newBets:arrayBetsUpdate})
+        await this.updateStatusRolette({ id: id, randomNumber: randomNumber, randomColor: randomColor, newBets: arrayBetsUpdate })
         let result = await RouletteModel.query("id").eq(id).exec();
 
-        return { status: true, message: "CLOSE_ROLETTE" ,data: result[0]}
+        return { status: true, message: "CLOSE_ROLETTE", data: result[0] }
     }
 
     private async updateBalancesUser(betsUser: any) {
@@ -99,17 +99,17 @@ export default class RouletteService {
         );
         await RouletteModel.update(
             { id: updateStatus.id },
-            { winning_numerical_result:  updateStatus.randomNumber},
+            { winning_numerical_result: updateStatus.randomNumber },
             { condition: new Condition().filter('id').exists() },
         );
         await RouletteModel.update(
             { id: updateStatus.id },
-            { bets:  updateStatus.newBets},
+            { bets: updateStatus.newBets },
             { condition: new Condition().filter('id').exists() },
         );
         await RouletteModel.update(
             { id: updateStatus.id },
-            { winning_color_result:  updateStatus.randomColor},
+            { winning_color_result: updateStatus.randomColor },
             { condition: new Condition().filter('id').exists() },
         );
         let response = await RouletteModel.update(
