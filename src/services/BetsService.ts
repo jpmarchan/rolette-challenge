@@ -15,10 +15,7 @@ export default class BetsService {
         let roletteData = await RouletteModel.query("id").eq(idRolette).exec();
         let userData = await UserModel.query("id").eq(decoded.id).exec();
         let validateBalances = this.validateBalances({ balanceBets: roletteData[0].bets, idUser: decoded.id })
-        if (userData.count == 0) {
 
-            return { status: false, message: "TOKEN_INVALID" }
-        }
         if (userData[0].balance < moneyBet || userData[0].balance <= validateBalances) {
 
             return { status: false, message: "INSUFFICIENT_BALANCE" }

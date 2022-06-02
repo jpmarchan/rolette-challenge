@@ -1,11 +1,12 @@
-import { Router } from "express";
-import bodyParser from 'body-parser'
-import { signIn, signUp } from "../controllers/UserController/UserController";
-import { closeRolette, createRolette, getRolettes } from "../controllers/RoletteController/RoletteController";
-import { createBets } from "../controllers/BetsController/BetsController";
-const jsonParser = bodyParser.json()
+import { Router } from 'express';
+import bodyParser from 'body-parser';
+import { signIn, signUp } from '../controllers/UserController/UserController';
+import { closeRolette, createRolette, getRolettes } from '../controllers/RoletteController/RoletteController';
+import { createBets } from '../controllers/BetsController/BetsController';
+import { verifyToken } from '../middlewares/authJwt';
+const jsonParser = bodyParser.json();
 
-const router = Router()
+const router = Router();
 
 //User auth
 router.post('/user/signUp', jsonParser, signUp);
@@ -17,7 +18,6 @@ router.get('/rolette/list', jsonParser, getRolettes);
 router.post('/rolette/closing', jsonParser, closeRolette);
 
 //bets
-router.post('/bets/create', jsonParser, createBets);
-
+router.post('/bets/create', jsonParser, verifyToken, createBets);
 
 export default router;
